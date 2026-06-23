@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caracol — Certificate Registry</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="logo">
+      <svg class="a-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 3L4 9.5v13L16 29l12-6.5v-13L16 3zm0 2.3L26 11v10l-10 5.7L6 21V11l10-5.7z" fill="#F4F4F8"/>
+        <path d="M16 8l-6 10h3l1.5-2.5h3L19 18h3L16 8zm0 3.5l1.8 3h-3.6L16 11.5z" fill="#00D4E8"/>
+      </svg>
+      <div>
+        <div class="wordmark">Caracol</div>
+        <div class="header-sub">Certificate registry</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Config warning (only shows if POWER_AUTOMATE_URL is not set) -->
+  <div id="config-warning" class="banner b-warn" style="display:none;margin-bottom:24px;">
+    ⚠ Power Automate URL not configured — see <strong>SETUP.md</strong> to connect your SharePoint Excel file.
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('issue')">Issue certificate</button>
+    <button class="tab" onclick="switchTab('registry')">Registry</button>
+  </div>
+
+  <!-- Issue tab -->
+  <div id="tab-issue" class="tab-section">
+    <div id="issue-banner"></div>
+
+    <div class="prog-grid">
+      <div class="prog-card" onclick="selectProg('LFAM')" id="card-LFAM">
+        <div class="prog-eye">Professional</div>
+        <div class="prog-name">LFAM Professional</div>
+      </div>
+      <div class="prog-card" onclick="selectProg('ACAD')" id="card-ACAD">
+        <div class="prog-eye">Academy</div>
+        <div class="prog-name">Caracol Academy — Heron AM</div>
+      </div>
+      <div class="prog-card" onclick="selectProg('HERN')" id="card-HERN">
+        <div class="prog-eye">Startup training</div>
+        <div class="prog-name">Operations — Heron AM</div>
+      </div>
+      <div class="prog-card" onclick="selectProg('VIPR')" id="card-VIPR">
+        <div class="prog-eye">Startup training</div>
+        <div class="prog-name">Operations — Vipra AM</div>
+      </div>
+    </div>
+
+    <div id="form-wrap" style="display:none">
+
+      <div class="form-section">
+        <div class="form-title">Recipient</div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Full name *</label>
+            <input type="text" id="f-name" placeholder="e.g. Meiz Majdoub" />
+          </div>
+          <div class="fg">
+            <label>Organisation</label>
+            <input type="text" id="f-org" placeholder="e.g. Mostar Labs" />
+          </div>
+          <div class="fg">
+            <label>City, country</label>
+            <input type="text" id="f-loc" placeholder="e.g. Victoria, Canada" />
+          </div>
+          <div class="fg">
+            <label>Email (optional)</label>
+            <input type="email" id="f-email" placeholder="e.g. meiz@mostar.io" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-title">Programme details</div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Issue date *</label>
+            <input type="date" id="f-date" />
+          </div>
+          <div class="fg">
+            <label>Signed by</label>
+            <select id="f-signer">
+              <option value="Jacopo Vanuzzi Bossini">Jacopo Vanuzzi Bossini — Field Service Engineer Director</option>
+              <option value="Massimiliano Boz">Massimiliano Boz — Customer Success Manager</option>
+            </select>
+          </div>
+          <div class="fg lfam-only">
+            <label>Delivery period</label>
+            <input type="text" id="f-delivery" placeholder="e.g. 15/12/2025–14/05/2026" />
+          </div>
+          <div class="fg lfam-only">
+            <label>Duration</label>
+            <input type="text" id="f-duration" placeholder="e.g. 5 weeks / 190 hours" />
+          </div>
+          <div class="fg span2 lfam-only">
+            <label>Delivery format</label>
+            <input type="text" id="f-format" placeholder="e.g. Online + on-site at Caracol AM, Barlassina (IT)" />
+          </div>
+          <div class="fg span2 lfam-only">
+            <label>Notes (optional)</label>
+            <textarea id="f-notes" placeholder="Any additional context…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-title">Certificate ID</div>
+        <div class="cert-id-box" id="f-certid">—</div>
+        <div class="hint">Auto-generated · unique per programme</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="submit-btn" onclick="issueCert()">Save to registry</button>
+        <button class="btn-ghost" onclick="resetForm(false)">Clear</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Registry tab -->
+  <div id="tab-registry" class="tab-section" style="display:none">
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-label">Total issued</div><div class="stat-num" id="s-total">—</div></div>
+      <div class="stat"><div class="stat-label">LFAM</div><div class="stat-num" id="s-lfam">—</div></div>
+      <div class="stat"><div class="stat-label">Academy</div><div class="stat-num" id="s-acad">—</div></div>
+      <div class="stat"><div class="stat-label">Startup</div><div class="stat-num" id="s-st">—</div></div>
+    </div>
+
+    <div id="reg-banner"></div>
+
+    <div class="reg-controls">
+      <input type="text" id="search-input" placeholder="Search by name or ID…" oninput="renderReg()" />
+      <select id="type-filter" onchange="renderReg()">
+        <option value="">All programmes</option>
+        <option value="LFAM">LFAM Professional</option>
+        <option value="ACAD">Caracol Academy</option>
+        <option value="HERN">Startup — Heron AM</option>
+        <option value="VIPR">Startup — Vipra AM</option>
+      </select>
+      <button class="export-btn" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export CSV
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="t-head">
+        <div>ID</div>
+        <div>Recipient</div>
+        <div>Programme</div>
+        <div>Date</div>
+      </div>
+      <div id="reg-list">
+        <div class="loading"><div class="spinner"></div>Loading registry…</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /app -->
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
