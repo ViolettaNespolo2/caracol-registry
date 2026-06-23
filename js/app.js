@@ -16,7 +16,7 @@ const STATE = {
 window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('f-date').value = today();
 
-  if (!CONFIG.POWER_AUTOMATE_URL) {
+if (!CONFIG.POWER_AUTOMATE_WRITE_URL) {
     document.getElementById('config-warning').style.display = 'block';
   }
 
